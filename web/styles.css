@@ -1,0 +1,45 @@
+/*bootstrap template sourced from W3Schools https://www.w3schools.com/bootstrap/tryit.asp?filename=trybs_temp_marketing&stacked=h */
+
+
+/* Remove the navbar's default margin-bottom and rounded borders */ 
+.navbar {
+  margin-bottom: 0;
+  border-radius: 0;
+  background-color: #86bd3b;
+}
+
+.navbar-toggle button {
+  color: white;
+}
+
+.dropdown .open li {
+  color:darkgreen !important;
+}
+
+nav, footer, a {
+  color:white;
+}
+
+button {
+  padding: 0px;
+}
+
+/* Add a green background color and some padding to the footer */
+footer {
+  background-color: #86bd3b;
+  color: white;
+  padding: 25px;
+}
+
+.carousel-inner img {
+  width: 60%; /* Set width to 100% */
+  margin: auto;
+  min-height:30%;
+}
+
+/* Hide the carousel text when the screen is less than 600 pixels wide */
+@media (max-width: 600px) {
+.carousel-caption {
+  display: none; 
+}
+}

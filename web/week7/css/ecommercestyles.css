@@ -1,0 +1,143 @@
+body {
+  font-family: 'Nanum Myeongjo', serif;
+
+
+}
+
+/* Remove the navbar's default margin-bottom and rounded borders */ 
+.navbar {
+  margin-bottom: 0;
+  border-radius: 0;
+  background-color: #7d5839;
+}
+
+h3 {
+  margin-top: 0px;
+}
+
+.white {
+  color:white;
+}
+
+.navbar-toggle button {
+  color: white;
+}
+
+.jumbotron {
+  background-image: url(../images/smallbanner.jpg);
+  text-align: left;
+  color: white;
+}
+
+#homeshop {
+  background: white;
+  color: black;
+  text-decoration: none;
+  border:darkslategray;
+  padding:0.3em 1.2em;
+  border-radius:2em;
+}
+
+#aboutlocation {
+  background: rgb(60,72,50);
+  color: white;
+  text-decoration: none;
+  border:darkslategray;
+  padding:0.3em 1.2em;
+  border-radius:2em;
+}
+
+
+input {
+  background: none!important;
+  border: none;
+  text-decoration: none;
+  padding: 0px;
+  background-color: none !important;
+}
+
+.card {
+  padding-bottom: 3em;
+}
+
+.img-home {
+  width: 100%;
+  height: auto;
+}
+
+.d-none {
+  display:none;
+}
+
+.text-left {
+  text-align: left;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.about {
+  padding-top: 3em;
+  padding-bottom: 3em;
+}
+
+#padrow {
+  padding: 3em;
+}
+
+footer {
+  width: 100%;
+  
+  bottom: 0;
+  padding-top: 1.5em;
+  background-color: #7d5839;
+}
+
+.img-credit {
+  background-color: #7d5839;
+  color: white;
+  padding: 1.2em 1.2em;
+  
+}
+
+#itemtop {
+  margin-top: 3em;
+}
+
+#fillpic {
+  background-color: rgb(184, 175, 188);
+  border: double, black;
+  padding-top: 3em;
+  padding-bottom: 3em;
+}
+
+.quiet-link {
+  text-decoration: none;
+}
+
+.username {
+  display: none;
+}
+
+.btn-block {
+  background-color: rgb(184, 175, 188);
+}
+
+/*item page styles*/
+.carousel-inner img {
+  width: 100%; /* Set width to 100% */
+  min-height: 200px;
+}
+
+/* Hide the carousel text when the screen is less than 600 pixels wide */
+@media (max-width: 600px) {
+  .carousel-caption {
+    display: none; 
+  }
+}
+
+.carousel-control {
+  background-color: rgb(157,205,254);
+}
+

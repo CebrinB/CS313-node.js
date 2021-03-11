@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CS313 Team 09</title>
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <%- include ("../partials/nav.ejs") %>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <form action="/math" method="GET" id="form">
+          <div class="form-group">
+            <label for="operand">Select a math operation</label>
+            <input type="radio" class="form-control" id="operation" name="operation" aria-describedby="basicmathoperator" value="Add">Add
+            <input type="radio" class="form-control" id="operation" name="operation" aria-describedby="basicmathoperator" value="Subtract">Subtract
+            <input type="radio" class="form-control" id="operation" name="operation" aria-describedby="basicmathoperator" value="Multiply">Multiply
+            <input type="radio" class="form-control" id="operation" name="operation" aria-describedby="basicmathoperator" value="Divide">Divide
+          </div>
+          <div class="form-group">
+            <label for="operand1">First operand</label>
+            <input type="text" class="form-control" name="operand1" id="operand1">
+            <label for="operand2">Second operand</label>
+            <input type="text" class="form-control" name="operand2" id="operand2">
+          </div>
+          <button type="submit" class="btn btn-primary">Submit</button>
+          <button type="button" id="ajax" class="btn btn-primary">Use AJAX</button>
+        </form>
+        </div>
+        <div class="col-sm-6" id="json"></div>
+    </div>
+  </div>
+  <script>
+    $('#ajax').click(function() {
+        $.ajax({ 
+            data: $('form').serialize(),
+            type: $('form').attr('method'),
+            url: '/math_service',
+            datatype: 'json',
+            success: function(result) {
+              console.log(result);
+              document.querySelector('#json').innerHTML = 
+                result['operand1'] + 
+                result['symbol'] +
+                result['operand2'] + 
+                '=' +
+                result['total'];
+              
+            }
+
+        });
+        return false; 
+    });
+  </script>
+</body>
+</html>

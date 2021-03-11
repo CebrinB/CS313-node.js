@@ -1,0 +1,18 @@
+create table team10.person (
+	personID SERIAL NOT NULL PRIMARY KEY, 
+	firstName VARCHAR(26) NOT NULL, 
+	lastName VARCHAR(26) NOT NULL, 
+	dateOfBirth DATE NOT NULL );
+
+create table team10.relationship (
+	relationshipID SERIAL NOT NULL PRIMARY KEY,
+	parent INT NOT NULL REFERENCES team10.person(personID),
+	child INT NOT NULL REFERENCES team10.person(personID) 
+);
+
+INSERT INTO team10.person(firstName, lastName, dateOfBirth) VALUES 
+('Josh', 'Brown', '1993-05-15'),
+('Lucy', 'Brown', '1953-06-03');
+
+INSERT INTO team10.relationship(parent, child) VALUES
+(2, 1);

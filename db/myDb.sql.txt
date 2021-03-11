@@ -1,0 +1,62 @@
+CREATE SCHEMA ecommerce;
+
+//table to store user information
+CREATE TABLE ecommerce.user (
+user_id SERIAL NOT NULL PRIMARY KEY,
+user_name VARCHAR(56) NOT NULL,
+password VARCHAR(255) NOT NULL,
+billing_address INT REFERENCES ecommerce.address(address_id),
+billing_phone VARCHAR(15),
+display_name VARCHAR(56)
+);
+
+//table for store locations
+CREATE TABLE ecommerce.location (
+location_id SERIAL NOT NULL PRIMARY KEY,
+location_name VARCHAR(56) NOT NULL,
+location_address INT NOT NULL REFERENCES ecommerce.address(address_id),
+location_phone VARCHAR(15) NOT NULL
+);
+
+//tables for items sold in store
+CREATE TABLE ecommerce.item (
+item_id SERIAL NOT NULL PRIMARY KEY,
+item_name TEXT NOT NULL,
+item_price DECIMAL(8, 2) NOT NULL,
+item_description VARCHAR(255) NOT NULL,
+item_type VARCHAR(26) NOT NULL
+);
+
+//tables for customer reviews
+CREATE TABLE ecommerce.review (
+review_id SERIAL NOT NULL PRIMARY KEY,
+user_id INT NOT NULL REFERENCES ecommerce.user(user_id),
+rating SMALLINT NOT NULL CHECK (0<rating AND rating<=5),
+title TEXT NOT NULL,
+content TEXT NOT NULL,
+item_id INT NOT NULL REFERENCES ecommerce.item(item_id);
+);
+
+//table for addresses
+CREATE TABLE ecommerce.address (
+address_id SERIAL NOT NULL PRIMARY KEY,
+address VARCHAR(56) NOT NULL,
+city TEXT NOT NULL,
+state TEXT NOT NULL,
+zip INT NOT NULL,
+);
+
+//testing purposes only
+CREATE TABLE ecommerce.test (
+ testID SERIAL NOT NULL PRIMARY KEY,
+ name VARCHAR(26) NOT NULL
+ );
+
+//table for cart items
+CREATE TABLE ecommerce.cart (
+  user_id INT NOT NULL REFERENCES ecommerce.user(user_id),
+  item_id INT NOT NULL REFERENCES ecommerce.item(item_id),
+  quantity INT NOT NULL
+);
+
+

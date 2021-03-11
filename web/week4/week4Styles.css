@@ -1,0 +1,21 @@
+ul {
+  list-style-type: none;
+}
+
+li {
+  display:flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+img {
+  height: 40px;
+  width: 40px;
+}
+
+.cancel {
+  transform: rotate(45deg);
+  color: black;
+  font-size: large;
+}
+
