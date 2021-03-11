@@ -13,6 +13,23 @@ const pool = new Pool(
       }
 });
 
+const client = new Client({
+    connectionString: connectionString,
+    ssl: {
+      rejectUnauthorized: false
+    }
+  });
+  
+  client.connect();
+  
+  client.query('SELECT * FROM bookshelf.authors;', (err, res) => {
+    if (err) throw err;
+    for (let row of res.rows) {
+      console.log(JSON.stringify(row));
+    }
+    client.end();
+  });
+
 // set the view engine to ejs
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
@@ -29,43 +46,30 @@ app.get('/getData', function(req, res) {
 });
 
 app.get('/getBooks', getBooks);
-app.get('/getAuthors', getAuthors);
-
-
-var sql = "SELECT * FROM bookshelf.books";
-
-pool.query(sql, function(err, result) {
-    // If an error occurred...
-    if (err) {
-        console.log("Error in query: ")
-        console.log(err);
-    }
-
-    // Log this to the console for debugging purposes.
-    console.log("Back from DB with result:");
-    console.log(result.rows);
-
-
-});  
+app.get('/getAuthors', getAuthors);  
 
 app.listen(PORT);
 console.log('server running at ' + PORT);
 
 function getBooks(req, res) {
-    var sql = "SELECT * FROM bookshelf.books";
+    var sql = "SELECT * FROM bookshelf.books;";
 
-    pool.query(sql, function(err, result) {
-        // If an error occurred...
-        if (err) {
-            console.log("Error in query: ")
-            console.log(err);
+    const client = new Client({
+        connectionString: connectionString,
+        ssl: {
+          rejectUnauthorized: false
         }
-
-        // Log this to the console for debugging purposes.
-        console.log("Back from DB with result:");
-        console.log(result.rows);
-        res.json(JSON.stringify(result.rows))
-    });
+      });
+      
+      client.connect();
+      
+      client.query(sql, (err, res) => {
+        if (err) throw err;
+        for (let row of res.rows) {
+          console.log(JSON.stringify(row));
+        }
+        client.end();
+      });
 }
 
 function getAuthors(req, res) {
