@@ -1,41 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kirjastoni</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-    <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans&family=Noto+Sans+JP&display=swap" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.2.1.min.js" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
-    <!-- use this link for slender text 
-      <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@100&display=swap" rel="stylesheet"> -->
-    <script src="https://kit.fontawesome.com/b631726285.js" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="/styles/styles.css">
-    <link rel="shortcut icon" href="/images/favicon.png">
+    <%- include ("../partials/head.ejs") %>
   </head>
   <body>
-    
-      <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
-        <a class="navbar-brand" href="index.html"><h3 id="brand">KIRJASTONI</h3></a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-      
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul class="navbar-nav mr-auto">
-            <li class="nav-item active"><a class="nav-link" href="index.html">Home <span class="sr-only">(current)</span></a></li>
-            <li class="nav-item"><a class="nav-link" href="about.html">About Me</a></li>
-            <li class="nav-item"><a class="nav-link" href="projects.html">Projects</a></li>
-            <li class="nav-item"><a class="nav-link" href="contact.html">Contact Me</a></li>
-          </ul>
-          <ul class="nav navbar-nav navbar-right">
-            <li><a class="nav-link" href="#" id="login"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-          </ul>
-        </div>
-      </nav>
+    <%- include ("../partials/nav.ejs") %>
       
       <main>
         <div class="container-fluid">
