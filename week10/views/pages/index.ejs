@@ -8,79 +8,19 @@
       
       <main>
         <div class="container-fluid">
-          <div class="row"> <!-- 3 columns -->
-            
-            <div class="col-md-3"></div> <!-- left column -->
-            
-            <div class="col-md-6"> <!-- center column -->
-              <div class="row contact-card"> <!-- 2 columns -->
-                
-                <div class="col-md-6 contact-card-left text-center">
-                  <img class="card-img-top rounded-circle" style="width:50%" src="/images/headshot.jpg" alt="A lovely picture of myself">
-                  <div class="card-body">
-                    <h4 class="card-title font-weight-bold" id="name">Cebrin Billings</h4>
-                    <div><img src="/images/line.jpg"></div>
-                    <p class="card-text" id="jobtitle">SOFTWARE ENGINEER</p>
-                  </div> <!-- close card-body -->
-                  <div class="container-fluid" id="minifooter">
-                    <a href="#" id="github"><i class="fab fa-github-alt"></i></a>
-                    <a href="#" id="stack overflow"><i class="fab fa-stack-overflow"></i></a>
-                    <a href="#" id="linkedin"><i class="fab fa-linkedin-in"></i></a>
-                  </div> <!-- close minifooter -->
-                </div> <!-- close column-->
-                
-                <div class="col-md-6 contact-card-right">
-                  <div class=""><h1 id="greeting">Hello</h1></div>
-                  <div class="card-body">
-                    <h4 class="card-text" id="whoiam">Here's who I am & what I do</h4><br>
-                    <button onclick="window.location.href='resume.html'"><i class="fas fa-file-alt"></i> RESUME</button>
-                    <button onclick="window.location.href='projects.html'"><i class="fas fa-arrow-circle-right"></i> PROJECTS</button><br><br><br>
-                    <p class="card-text" id="welcome">Welcome to my page, here is some cool info about me.</p>
-                  </div> <!-- close card-body -->
-                </div> <!-- close column-->
-              
-              </div> <!-- close row -->
-            </div> <!-- center column -->
-            
-            <div class="col-md-3 text-right"></div> <!-- right column -->    
-          
-          </div> <!-- close row-->
+          <div class="row">
+            <div class="col-md-3">
+              <%- include ("../partials/sidenav.ejs") %>
+            </div> <!-- close left column -->
+            <div class="col-md-6 d-none" id="main">
+              <!-- content delivered by the server -->
+              <%- include ("../pages/home.ejs") %>
+            </div>
+            <div class="col-md-3"></div> <!-- close right column -->
+          </div> <!-- close row -->
         </div> <!-- close container -->
-      </main>
-    
-    <!-- FOOTER -->
-    <div class="footer-margin" id="footer-spacing"><pre>   <br></pre></div> <!-- close footer-margin -->
-      <footer class="footer container-fluid text-center">
-        <div  class="row"> <!-- two columns -->
-          
-          <div class="col-md-6 footer-margin">
-            © 2023 by Cebrin Billings.<br> Design inspired by <a href="https://www.wix.com/website-template/view/html/2622?siteId=7e761c3c-729b-4d4e-9dc3-a8242c486f56&metaSiteId=3f62d478-a066-43ee-98e6-3e48600ff893&originUrl=https%3A%2F%2Fwww.wix.com%2Fwebsite%2Ftemplates%2Fhtml%2Fportfolio-cv%2Fpersonal&tpClick=view_button">Maya Nelson</a>.
-          </div> <!-- close left column -->
-          
-          <div class="col-md-6 footer-margin">
-            <div class="row">
-              
-              <div class="col-md-4">
-                <span><h5>Call</h5><p><a href="tel:1-555-555-5555" id="phone">555-555-5555</a></p></span> 
-              </div> <!-- close left minifooter-->
-              
-              <div class="col-md-4">
-                <span><h5>Write</h5><p><a href="mailto:email@byui.edu" id="email">email@byui.edu</a></p></span>
-              </div> <!-- close center minifooter -->
-              
-              <div class="col-md-4">
-                <span><h5>Follow</h5><p id="follow">
-                  <a href="#" id="github"><i class="fab fa-github-alt"></i></a>
-                  <a href="#" id="stack overflow"><i class="fab fa-stack-overflow"></i></a>
-                  <a href="#" id="linkedin"><i class="fab fa-linkedin-in"></i></a>
-                </span>
-                </div> <!-- close right minifooter -->
-            </div> <!-- close row -->
-          </div> <!-- close right column -->
-          
-        </div>
-      </footer>
-    
-    <script src="../main.js"></script>
+      </main>    
+    <%- include ("../partials/footer.ejs") %>
+    <script src="/js/clientside.js" type="module"></script>
   </body>
 </html>

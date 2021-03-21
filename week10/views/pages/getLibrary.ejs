@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Cebrin Billings Week 10</title>
+  <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css" />
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+  <script type="text/javascript" src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-4"></div>
+      <div class="col-sm-4">
+          <div class="text-center well">
+          <button onclick="getLibrary()" class="btn btn-primary">Get library</button>
+          
+          </div>
+        </div>
+        <div class="col-sm-4" id="json"></div>
+    </div>
+  </div>
+  <script>
+    function getLibrary() {
+      //declare empty data object and fill it with params
+      $.ajax({
+        type: 'GET',
+        url: "/library",
+          
+        success: (data) => {
+          //double check that we are getting the right thing
+          console.log('ajax success!', data);
+          
+          //fill div with query result
+          $('#json').html(data);
+        
+        }//success data call
+      
+      });//ajax function call
+    }
+
+
+
+  </script>
+</body>
+</html>
