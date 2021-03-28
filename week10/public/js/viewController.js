@@ -1,23 +1,26 @@
-export class ViewController {
-  constructor () {
-    
+import Library from "./Library.js";
+
+export default class ViewController {
+  constructor (username) {
+    this.username = username;
+    this.library = new Library(username);
   }
 
-  loadHome() {
-    //ajax request to serve up login.html  
+  viewHome() {
+    //ajax request to serve up home.html  
     $.ajax({
       type: 'GET',
       url: "/home", 
       success: (data) => {
         //double check that we are getting the right thing
         console.log('ajax success!');
-        $('#main').html(data);
+        $('#main').html(data).attr('name', 'home');
       }//success data call
       
     });//ajax function call
   }
 
-  loadLogin() {
+  viewLogin() {
     //ajax request to serve up login.html  
     $.ajax({
       type: 'GET',
@@ -25,38 +28,50 @@ export class ViewController {
       success: (data) => {
         //double check that we are getting the right thing
         console.log('ajax success!');
-        $('#main').html(data);
+        $('#main').html(data).attr('name', 'login');
       }//success data call
       
     });//ajax function call
   }
 
-  loadLibrary() {
-    //ajax request to serve up login.html  
+  viewLibrary() {
+    //ajax request to serve up library.html  
     $.ajax({
       type: 'GET',
       url: "/library", 
       success: (data) => {
         //double check that we are getting the right thing
         console.log('ajax success!');
-        $('#main').html(data);
+        $('#main').html(data).attr('name', 'library');
       }//success data call
       
     });//ajax function call
+
   }
 
-  loadAddBooks() {
-    //ajax request to serve up login.html  
+  viewAddBooks() {
+    //ajax request to serve up addBooks.html  
     $.ajax({
       type: 'GET',
       url: "/addBooks", 
       success: (data) => {
         //double check that we are getting the right thing
         console.log('ajax success!');
-        $('#main').html(data);
+        $('#main').html(data).attr('name', 'addBooks');
       }//success data call
       
     });//ajax function call
   }
+
+  getLibrary() {
+    this.library.getLibrary();
+  }
+
+  makeLibrarySearchable() {
+    $('.letter').each().on('click', () => {
+      this.library.getLibraryAlphabetical();
+    });
+  }
+  
 
 }

@@ -1,4 +1,4 @@
-export class User {
+export default class User {
   constructor (username) {
     this.username = username;
   }
@@ -8,13 +8,11 @@ export class User {
   }
 
   signIn() {
-    //send username and password to sign in
-    console.log('inside signin!');
-          
-    let data = {};
-    data['username'] = $('#username').value;
-    data['password'] = $('#password').value;
-
+    //send username and password to sign in          
+    var data = {};
+    data["username"] = $('#username').val();
+    data["password"] = $('#password').val();
+    
     $.ajax({
       type: 'POST',
       url: "/signin",
@@ -26,7 +24,7 @@ export class User {
           $('#main').html('Successfully signed in!');
           this.username = data['username'];
           this.setUsername();
-        } else $('#main').html('Incorrect username or password');        
+        } //else $('#main').html('Incorrect username or password');        
       }//success data call
     
     });//ajax function call

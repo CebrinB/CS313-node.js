@@ -5,7 +5,6 @@ module.exports = {
   },
 
   verifyUsername : function(req, res) {
-    console.log('here!');
     //logic to check if a data item exists in the user's database
       //esp. a particular book, or a username
       console.log("Verifying username exists...")

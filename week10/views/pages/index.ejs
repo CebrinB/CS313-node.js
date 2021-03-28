@@ -2,6 +2,7 @@
 <html lang="en">
   <head>
     <%- include ("../partials/head.ejs") %>
+  
   </head>
   <body>
     <%- include ("../partials/nav.ejs") %>
@@ -12,10 +13,12 @@
             <div class="col-md-3">
               <%- include ("../partials/sidenav.ejs") %>
             </div> <!-- close left column -->
-            <div class="col-md-6 d-none" id="main">
-              <!-- content delivered by the server -->
-              <%- include ("../pages/home.ejs") %>
-            </div>
+            <div class="col-md-6 d-none" id="page">
+              <observable-div id="main" name="home">
+                <!-- content delivered by the server -->
+                <%- include ("../pages/home.ejs") %>
+              </observable-div>
+            </div> <!-- close center column -->
             <div class="col-md-3"></div> <!-- close right column -->
           </div> <!-- close row -->
         </div> <!-- close container -->
