@@ -7,27 +7,40 @@ export default class User {
     return this.username;
   }
 
-  signIn() {
-    //send username and password to sign in          
-    var data = {};
-    data["username"] = $('#username').val();
-    data["password"] = $('#password').val();
+  login() {
+    //send username and password to login          
+    var params = {
+      user: $('#username').val(),
+      password: $('#password').val()
+    }
     
-    $.ajax({
-      type: 'POST',
-      url: "/signin",
-      data: data, 
-      success: (data) => {
-        //double check that we are getting the right thing
-        console.log('ajax success!', data);
-        if (data === true) {
-          $('#main').html('Successfully signed in!');
-          this.username = data['username'];
-          this.setUsername();
-        } //else $('#main').html('Incorrect username or password');        
-      }//success data call
+    $.post('/login', params, function(response) {
+      console.log(response);
+    })
+    .fail(function(response) {
+      console.log(response);
+    });
     
-    });//ajax function call
+  }
+
+  createAccount() {
+    console.log('create new account');
+
+    var params = {
+      user: $('#username').val(),
+      password: $('#password').val()
+    }
+
+    $.post('/createAccount', params, function(response) {
+
+      //$('#main').html(response).attr('name', 'library');
+      //$('#serverResponse').html(result).css('color', 'green');
+      
+    })
+      .fail(function(response) {
+        console.log(response);
+        $('#serverResponse').html(response.responseJSON.message).css('color', 'red');
+      });
   }
 
   setUsername() {

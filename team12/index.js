@@ -34,13 +34,13 @@ express()
   .get('/getServerTime', verifyLogin, getServerTime)
   .listen(PORT, () => console.log(`Listening on ${ PORT }`))
 
-  function login(req, res) {
-    console.log(req.body);
-    let success = false;
-    let username = req.body.username;
-    var sql = "SELECT password  FROM users WHERE username = $1";
+function login(req, res) {
+  console.log(req.body);
+  let success = false;
+  let username = req.body.username;
+  var sql = "SELECT password  FROM users WHERE username = $1";
 
-pool.query(sql, [username], function(err, result) {
+  pool.query(sql, [username], function(err, result) {
     // If an error occurred...
     if (err) {
         console.log("Error in query: ")
@@ -53,18 +53,16 @@ pool.query(sql, [username], function(err, result) {
     bcrypt.compare('password', result.rows[0].password, function(err, match) {
       console.log
       console.log(match);
-     if (match){
-    success = true
-    req.session.username = username;
-  }
+      if (match){
+        success = true
+        req.session.username = username;
+      }
+    });
+
+
+    console.log(success);
+    res.json({'success': success});
   });
-
-
-  console.log(success);
-  res.json({'success': success});
-
-
-});
   
   //   if (req.body.username === "admin" && req.body.password === "password"){
   //     success = true

@@ -24,11 +24,25 @@ export default class ViewController {
     //ajax request to serve up login.html  
     $.ajax({
       type: 'GET',
-      url: "/login", 
+      url: "/getLogin", 
       success: (data) => {
         //double check that we are getting the right thing
         console.log('ajax success!');
         $('#main').html(data).attr('name', 'login');
+      }//success data call
+      
+    });//ajax function call
+  }
+
+  viewSignup() {
+    //ajax request to serve up signup.html  
+    $.ajax({
+      type: 'GET',
+      url: "/getSignup", 
+      success: (data) => {
+        //double check that we are getting the right thing
+        console.log('ajax success!');
+        $('#main').html(data).attr('name', 'signup');
       }//success data call
       
     });//ajax function call
@@ -61,16 +75,6 @@ export default class ViewController {
       }//success data call
       
     });//ajax function call
-  }
-
-  getLibrary() {
-    this.library.getLibrary();
-  }
-
-  makeLibrarySearchable() {
-    $('.letter').each().on('click', () => {
-      this.library.getLibraryAlphabetical();
-    });
   }
   
 

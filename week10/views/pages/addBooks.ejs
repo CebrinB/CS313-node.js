@@ -1,24 +1,27 @@
 <div class="card card-body">
   <div>Add books to <span></span> bookshelf</div>
-  <div><a>Search</a><a>Manual Entry</a></div>
+  <div id="serverResponse"></div>
+  <div class="d-none"><a id="selectSearch">Search</a><a id="selectManual">Manual Entry</a></div>
   <div class="d-none" id="search">
     <div>Select a search method:</div>
-    <div><button>ISBN</button><button>Keywords (Titles, Authors...)</button></div>
+    <div><button id="searchISBN">ISBN</button><button id="searchKeyword">Keywords (Titles, Authors...)</button></div>
     <div class="" id="isbn">
       <input class="form-control mr-sm-2" type="search" placeholder="ISBN - Adds item immediately" aria-label="Enter ISBN">
-      <button>Add Book</button>
+      <button id="addISBN">Add Book</button>
     </div>
     <div class="d-none" id="keywords">
-      <input class="form-control mr-sm-2 d-none" type="search" placeholder="Keywords (Titles, Authors...)" aria-label="Search">
-      <button>Search for Book</button>
+      <input class="form-control mr-sm-2" type="search" placeholder="Keywords (Titles, Authors...)" aria-label="Search">
+      <button id="searchBook">Search for Book</button>
     </div>
     <div class="d-none" id="searchresults"></div>
   </div>
 
-  <div class="" id="manualentry">
-    <input class="form-control mr-sm-2" type="text" placeholder="Title" aria-label="Title">
-    <input class="form-control mr-sm-2" type="text" placeholder="Author(s)" aria-label="Author(s)">
-    <input class="form-control mr-sm-2" type="text" placeholder="Publisher" aria-label="Publisher">
-    <button>Add Book</button>
+  <div class="" id="manualEntry">
+    <input class="form-control mr-sm-2" type="text" id="title" placeholder="Title" aria-label="Title">
+    <input class="form-control mr-sm-2" type="text" id="author" placeholder="Author(s)" aria-label="Author(s)">
+    <input class="form-control mr-sm-2" type="text" id="publisher" placeholder="Publisher" aria-label="Publisher">
+    <input class="form-control mr-sm-2" type="text" id="year" placeholder="Year Published" aria-label="Year Published">
+    <button id="addManual">Add Book</button>
   </div>
+  <div id="serverResponse"></div>
 </div>

@@ -28,7 +28,7 @@ window.addEventListener("load", () => {
   });
   $('.viewLibrary').on('click', () => {
     view.viewLibrary();
-    view.getLibrary();
+    view.library.getLibrary();
   });
   $('.addBook').on('click', () => {
     view.viewAddBooks();
@@ -46,12 +46,49 @@ class ObservableDiv extends HTMLElement {
       switch (newValue) {
         case 'login':
           $('#signin').on('click', () => {
-            user.signIn();
+            user.login();
+          });
+          $('#signup').on('click', () => {
+            view.viewSignup();
+          });
+          break;
+        case 'signup':
+          $('#createAccount').on('click', () => {
+            user.createAccount();
+            view.library.getLibrary();
           });
           break;
         case 'library':
+          $('.letter').on('click', (e) => {
+            view.library.renderLibraryAlphabetical(e.target.innerHTML);
+          });
           break;
         case 'addBooks':
+          $('#selectSearch').on('click', () => {
+            $('#manualEntry').addClass("d-none");
+            $('#search').removeClass("d-none");
+          });
+          $('#selectManual').on('click', () => {
+            $('#search').addClass("d-none");
+            $('#manualEntry').removeClass("d-none");
+          });
+          $('#searchISBN').on('click', () => {
+            $('#keywords').addClass("d-none");
+            $('#isbn').removeClass("d-none");
+          });
+          $('#searchKeyword').on('click', () => {
+            $('#isbn').addClass("d-none");
+            $('#keywords').removeClass("d-none");
+          });
+          $('#addISBN').on('click', () => {
+            view.library.addISBN();
+          });
+          $('#addManual').on('click', () => {
+            view.library.addManual();
+          });
+          $('#searchBook').on('click', () => {
+            console.log('trigger API call');
+          });
           break;
         default:
           break;

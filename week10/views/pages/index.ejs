@@ -10,16 +10,16 @@
       <main>
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-3">
+            <div class="col-md-2">
               <%- include ("../partials/sidenav.ejs") %>
             </div> <!-- close left column -->
-            <div class="col-md-6 d-none" id="page">
+            <div class="col-md-8 d-none" id="page">
               <observable-div id="main" name="home">
                 <!-- content delivered by the server -->
                 <%- include ("../pages/home.ejs") %>
               </observable-div>
             </div> <!-- close center column -->
-            <div class="col-md-3"></div> <!-- close right column -->
+            <div class="col-md-2"></div> <!-- close right column -->
           </div> <!-- close row -->
         </div> <!-- close container -->
       </main>    

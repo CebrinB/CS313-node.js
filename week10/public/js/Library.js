@@ -1,190 +1,234 @@
 export default class Library {
   constructor (username) {
-    this.username = 'tester';
+    this.username = username;
     this.library = [];
   }
 
+  getBooklist() {
+    return this.library;
+  }
+
+  showUpdateForm(book, li) {
+    //select the book li
+    li.classList.add('update');
+    $('.update').html($('<div/>')
+    
+    //append title input  
+    .append($('<input/>', {
+      class: 'form-control',
+      id: 'title',
+      placeholder: 'Title'
+    }).val(book.title))
+    
+    //append author input
+    .append($('<input/>', {
+      class: 'form-control',
+      id: 'author',
+      placeholder: 'Author'
+    }).val(book.name))
+    
+    //append publisher input
+    .append($('<input/>', {
+      class: 'form-control',
+      id: 'publisher',
+      placeholder: 'Publisher'
+    }).val(book.publisher))
+    
+    //append year input
+    .append($('<input/>', {
+      class: 'form-control',
+      id: 'year',
+      placeholder: 'Year'
+    }).val(book.year === 0 ? '' : book.year)));
+
+    //append save button
+    $('<div/>')
+    .append($('<a/>')
+      .on('click', (e) => {
+        this.updateBook(book, li);
+      })
+      .html('<i class="far fa-check-square"></i>'))
+    .append($('<div/>', {
+      id: 'serverResponse'
+    }))
+    .appendTo(li);
+  }
+
+  updateBook(book, li) {
+    //ajax request to update a book in user's library      
+    var string = JSON.stringify(book);
+
+    var params = {
+      user: this.username,
+      title: $('#title').val(),
+      author: $('#author').val(),
+      publisher: $('#publisher').val(),
+      year: $('#year').val(),
+      string
+    };
+
+    $.ajax({
+      type: 'PUT',
+      url: "/updateBook",
+      data: params,
+      dataType: 'json', 
+      success: (response) => {
+        //double check that we are getting the right thing
+        console.log('update ajax success!', response);
+        this.getLibrary();
+        $('#serverResponse').html(response.message).css('color', 'green');
+      } //success data call
+     })
+      .fail(function(response) {
+        $('#serverResponse').html(response.responseJSON.message).css('color', 'red');
+      });//ajax function call
+  }
+
+  deleteBook(book, li) {
+
+    var params = {
+      user: this.username,
+      book: JSON.stringify(book)
+    };
+
+    $.ajax({
+      type: 'DELETE',
+      url: "/deleteBook",
+      data: params,
+      dataType: 'json', 
+      success: (response) => {
+        //double check that we are getting the right thing
+        console.log('delete ajax success!', response);
+        $('#serverResponse').html(response.message).css('color', 'green');
+        li.remove();
+        if (!$('#bookshelf').children().length) {
+          $('#bookshelf').html('No books in your library');
+        }
+      } //success data call
+     })
+      .fail(function(response) {
+        $('#serverResponse').html(response.responseJSON.message).css('color', 'red');
+      });//ajax function call
+  }
+
+  renderLibrary(books) {
+    $('#bookshelf').html('');
+
+    let localInstance = this;
+    let author;
+    let publisher;
+    let year;
+
+    for (let book of books) {
+      //check for missing info
+      if (book.name === '') {
+        author = '(No Author Listed)'
+      } else author = book.name;
+      if (!book.publisher) {
+        publisher = '(No publisher listed)';
+      } else publisher = book.publisher;
+      if (book.year === 0) {
+        year = '(No year listed)';
+      } else year = book.year;
+
+      //create elements to display user's library
+      $('<li/>')
+      //append pic
+      .append($('<a/>')
+        .html('<img src="/images/book.jpg" alt="book cover"></img>'))
+      //append span
+      .append($('<span/>')
+        .html(book.title))
+      //append edit button
+      .append($('<a/>')
+        .on('click', (e) => {
+          let li = e.target.parentElement.parentElement;
+          localInstance.showUpdateForm(book, li);
+        })
+        .html('<i class="fas fa-pencil-alt"></i>'))
+      //append delete button
+      .append($('<a/>')
+        .on('click', (e) => {
+          let li = e.target.parentElement.parentElement;
+          localInstance.deleteBook(book, li)
+        })
+        .html('<i class="far fa-trash-alt"></i>'))
+      //append book info
+      .append($('<div/>')
+        .html('Written by ' + author))
+      .append($('<div/>')
+        .html('Published in ' + year))
+      .append($('<div/>')
+        .html('Published by ' + publisher))
+      .appendTo('#bookshelf');
+     
+    }
+  }
+
   getLibrary() {
-    //ajax request for user's library        
+    //ajax request for user's library    
+    var localInstance = this;   
     var params = {
       user: this.username,
     };
 
-    $.get("/getLibrary", params, function(result) {
+    $.get('/getLibrary', params, function(result) {
       if (result) {
-        console.log('it worked!');
-        this.library = result;
-        renderLibrary();
+        console.log('ajax success!', result);
+        if (result.length > 0) {
+          localInstance.library = result.sort((a, b) => a.title.localeCompare(b.title));
+          localInstance.renderLibrary(localInstance.library);
+        }
       }
     });
+  }
 
+  addISBN() {
+    console.log('add ISBN');
+  }
+
+  addManual() {
+    console.log('add manual');
+    //ajax request to manually add a book to user's library      
+    var params = {
+      user: this.username,
+      title: $('#title').val(),
+      author: $('#author').val(),
+      publisher: $('#publisher').val(),
+      year: $('#year').val()
+    };
+
+    $.post("/addBookManual", params, function(result) {
+      $('#serverResponse').html(result.message).css('color', 'green');
+      $('input').each(function() {
+        $(this).val('');
+      });
+    })
+      .fail(function(response) {
+        console.log(response);
+        $('#serverResponse').html(response.responseJSON.message).css('color', 'red');
+      });
   }
 
   renderLibraryAlphabetical(letter) {
-    //ajax request for user's library        
-    var data = {};
-    data["username"] = this.username;
-    data["letter"] = letter;
+    //filter bookshelf by letter
+    let filtered = [];
     
-    $.ajax({
-      type: 'GET',
-      url: "/getLibraryAlphabetical",
-      data: data,
-      dataType: 'json', 
-      success: (data) => {
-        //double check that we are getting the right thing
-        console.log('ajax success!', data);
-        $('#bookshelf').html(data);
-        
-        
-
-
-
-
-      }//success data call
-    
-    });//ajax function call
-  }
-
-  renderLibrary() {
-    //use this.library to create li items that are clickable to expand like in the horse app
-
-  }
-
-
-
-
-  getHorseById(horseId) {
-    return this.getAllHorses().find(horse => horse.id === horseId);
-  }
-
-  renderHorseList(parent) {
-    parent.innerHTML = '';
-
-    if (this.horseList.length < 1) {
-      let div = document.createElement('div');
-      div.setAttribute('id', 'instructions');
-      div.innerHTML =`
-      <div>
-        <p>Add a horse to see it's possible coat color!</p>
-      </div>`;
-      parent.appendChild(div);
+    if (letter === 'All') {
+      this.renderLibrary(this.library);
       return;
     }
-  
-    this.horseList.forEach(
-      (horse) => {
-        let item = document.createElement('li');
-        
-        item.addEventListener('click', e => {
-          let panel = e.target.nextElementSibling;
-          if (panel.style.maxHeight) {
-            panel.style.maxHeight = null;
-          } else {
-          panel.style.maxHeight = "300px";
-          }
-        });
-
-        let pic = document.createElement('a');
-        pic.innerHTML = `
-        <img class="pic" src="default.jpg" alt="picture of horse">`;
-        pic.addEventListener('click', e => {
-          let panel = e.target.parentElement.parentElement.nextElementSibling;
-          if (panel.style.maxHeight) {
-            panel.style.maxHeight = null;
-          } else {
-          panel.style.maxHeight = "300px";
-          }
-        });
-  
-        let name = document.createElement('span');
-        name.innerHTML = horse.name;
-        name.addEventListener('click', e => {
-          let panel = e.target.parentElement.nextElementSibling;
-          if (panel.style.maxHeight) {
-            panel.style.maxHeight = null;
-          } else {
-          panel.style.maxHeight = "300px";
-          }
-        });
-        
-
-        let del = document.createElement('a');
-        del.innerHTML = `
-        <i class="fas fa-plus-circle cancel"</i>`;
-        del.addEventListener('click', this.removeHorse.bind(this, horse));
-  
-        item.appendChild(pic);
-        item.appendChild(name);
-        item.appendChild(del);
-  
-        parent.appendChild(item);
-
-        let li = document.createElement('li');
-        li.classList.add('panel');
-        li.innerHTML =`
-        <div>
-          <p>Dam color: ${horse.damColor}<br>Sire color: ${horse.sireColor}<br>
-          Possible foal colors: ${horse.damColor}, ${horse.sireColor}, Bay</p>
-        </div>`;
-        let button = document.createElement('input');
-        button.type = 'button';
-        button.value = 'Edit Horse';
-        button.addEventListener('click', this.editHorse.bind(this, horse));
-        li.appendChild(button);
-
-        parent.appendChild(li);
-      }
-    );
-  } 
-
-  //Create a new horse
-  addHorse() {
-    let form = document.querySelector('#newHorse');
-
-    const horse = {
-      id: + new Date(),
-      name: form.elements[0].value,
-      damColor: form.elements[1].options[form.elements[1].selectedIndex].text,
-      damPattern: form.elements[2].options[form.elements[2].selectedIndex].text,
-      damGray: form.elements[3].checked,
-      sireColor: form.elements[4].options[form.elements[4].selectedIndex].text,
-      sirePattern: form.elements[5].options[form.elements[5].selectedIndex].text,
-      sireGray: form.elements[6].checked
-    };
-
-    this.horseList.push(horse);
-    this.saveHorse();
-    document.querySelector('#makeHorse').style.display = 'none';
-  }
-
-  //edit horse characteristics
-  editHorse(horse) {    
-    document.querySelector('#makeHorse').classList.toggle('show');
-    document.querySelector('#main').classList.toggle('show'); 
-    document.querySelector('#rot').classList.toggle('cancel');
     
-    let form = document.querySelector('#newHorse');
-    form.elements[0].value = horse.name;
-
-    this.removeHorse(horse);
+    if (letter === '#') {
+      filtered = this.getBooklist().filter(book => Number.isFinite(book.title[0]));
+      letter = 'a number';
+    } else filtered = this.getBooklist().filter(book => book.title[0] === letter);
+    
+    console.log('You clicked ' + letter);
+    
+    if (filtered.length) {
+      this.renderLibrary(filtered);
+    } else $('#bookshelf').html("No books in your library that start with " + letter);
   }
 
-  //Delete horse from array, save to localStorage, then redraw the list
-  removeHorse(horse) {
-    this.horseList.splice(this.horseList.indexOf(this.getHorseById(horse.id)),1);
-    this.saveHorse();
-    this.renderHorseList(document.querySelector('#horses'));
-  }
-
-  //Save the array of horses into localStorage memory
-  saveHorse() {
-    localStorage.setItem('horseList', JSON.stringify(this.horseList));
-  }
-
-  //Load the array of horses from localStorage memory
-  loadHorse() {
-    this.horseList = JSON.parse(localStorage.getItem('horseList'));
-  }
 };
-
