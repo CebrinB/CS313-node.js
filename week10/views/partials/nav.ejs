@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
+<nav class="navbar navbar-expand-md navbar-light bg-light fixed-top">
   <a class="navbar-brand" href="/"><h3 id="brand">kirjasto.ni</h3></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -8,9 +8,26 @@
     <ul class="navbar-nav mr-auto">
       <li class="nav-item" id="home"><a class="nav-link">Home</a></li>
       <li class="nav-item viewLibrary"><a class="nav-link">My Library</a></li>
+      <li class="nav-item addBook"><a class="nav-link">Add Items</a></li>
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li class="nav-item"><a class="nav-link d-none" id="userLabel"><i class="fas fa-sign-in-alt"></i> Login    <i class="fas fa-lemon"></i></a></li>
+      <li class="nav-item btn-group">
+        <a class="nav-link d-none" id="userLabel">
+            <i class="fas fa-sign-in-alt"></i> Login    
+            <i class="fas fa-lemon"></i>
+        </a>
+        <div class="d-none  align-items-center" id="drop">
+          <a class="dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            <span class="sr-only">Toggle Dropdown</span>
+          </a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item logout">
+              <i class="fas fa-sign-out-alt"></i> Logout  
+              <i class="fas fa-lemon"></i>
+            </a>
+          </div>
+        </div>
+      </li>
     </ul>
   </div>
 </nav>

@@ -1,26 +1,34 @@
+<div id="serverResponse"></div>
 <div class="row contact-card"> <!-- 2 columns -->
   
-  <div class="col-md-6 contact-card-left text-center">
+  <div class="col-md-6 contact-card-left text-center shadow">
     <img class="card-img-top rounded-circle" style="width:50%" src="/images/headshot.jpg" alt="A lovely picture of books">
     <div class="card-body">
       <h4 class="card-title font-weight-bold"></h4>
       <div><img src="/images/line.jpg"></div>
       <p class="card-text">kirjasto.ni is a digital inventory of your personal library so you always know what books you own.</p>
     </div> <!-- close card-body -->
-    <div class="container-fluid" id="minifooter" style="position: absolute; bottom: 0;">
-      <a href="github.com/CebrinB"><i class="fab fa-github-alt"></i></a>
+    <div class="container-fluid d-none d-md-flex" id="minifooter" style="position: absolute; bottom: 0;">
+      <a href="https://github.com/CebrinB/CS313-node.js/tree/main/week10"><i class="fab fa-github-alt"></i></a>
       <a href="https://stackoverflow.com/users/10766004/cebrin-billings"><i class="fab fa-stack-overflow"></i></a>
       <a href="https://linkedin.com/in/cebrinbillings"><i class="fab fa-linkedin-in"></i></a>
     </div> <!-- close minifooter -->
   </div> <!-- close column-->
   
-  <div class="col-md-6 contact-card-right">
-    <div class=""><h1>Hello</h1></div>
-    <div class="card-body">
-      <h4 class="card-text">Welcome to kirjasto.ni, your personal library!</h4><br>
-      <button class="btn btn-sm viewLibrary"><i class="fas fa-book-open"></i> View Bookshelf</button>
-      <button class="btn btn-sm addBook"><i class="fas fa-plus-circle"></i> Add Items</button><br><br><br>
-      <p class="card-text">"something magical can happen when you read a good book." - JK Rowling</p>
+  <div class="col-md-6 contact-card-right shadow">
+    <div class="card-body card-body-right d-flex flex-column justify-content-around">
+      <div class=""><h1 class="display-3">Hello</h1></div>
+      <h4 class="card-text">Welcome to kirjasto.ni, your personal library!</h4>
+      <div class="d-flex justify-content-around" style="padding-right: 1rem">
+        <button class="btn btn-sm createAccount"><i class="fas fa-user-plus"></i> Create Account</button>
+        <button class="btn btn-sm login"><i class="fas fa-sign-in-alt"></i> Log in</button>
+      </div>
+      <div class="text-center" id="lemon"><i class="fas fa-lemon"></i></div>
+      
+      <blockquote class="blockquote">
+        <p class="mb-0" id="quote">"something magical happens when you read a good book."</p>
+        <footer class="blockquote-footer">JK Rowling <cite title="Source Title">, Author of Harry Potter</cite></footer>
+      </blockquote>
     </div> <!-- close card-body -->
   </div> <!-- close column-->
 

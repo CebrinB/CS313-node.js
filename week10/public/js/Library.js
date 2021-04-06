@@ -4,6 +4,10 @@ export default class Library {
     this.library = [];
   }
 
+  setUsername(username) {
+    this.username = username;
+  }
+
   getBooklist() {
     return this.library;
   }
@@ -85,7 +89,6 @@ export default class Library {
   }
 
   deleteBook(book, li) {
-
     var params = {
       user: this.username,
       book: JSON.stringify(book)
@@ -102,7 +105,7 @@ export default class Library {
         $('#serverResponse').html(response.message).css('color', 'green');
         li.remove();
         if (!$('#bookshelf').children().length) {
-          $('#bookshelf').html('No books in your library');
+          $('#bookshelf').html('No more books in your library');
         }
       } //success data call
      })
@@ -165,22 +168,34 @@ export default class Library {
     }
   }
 
-  getLibrary() {
+  getLibrary(one) {
     //ajax request for user's library    
-    var localInstance = this;   
+    var localInstance = this;
+
     var params = {
-      user: this.username,
+      user: this.username
     };
 
-    $.get('/getLibrary', params, function(result) {
-      if (result) {
-        console.log('ajax success!', result);
-        if (result.length > 0) {
-          localInstance.library = result.sort((a, b) => a.title.localeCompare(b.title));
-          localInstance.renderLibrary(localInstance.library);
+    $.get('/getLibrary', params, function(response) {
+        console.log('ajax success!', response);
+        localInstance.library = response.sort((a, b) => a.title.localeCompare(b.title));
+        localInstance.renderLibrary(localInstance.library);
+      })
+      .fail(function(response) {
+        console.log(response);
+        $('#bookshelf').text(response.responseJSON.message);
+        
+        if (response.status === 404) {
+          $('<button/>', {
+          class: 'd-md-none'
+          })
+            .on('click', () => {
+              one();
+            })
+            .html('<i class="fas fa-book-reader"></i> Add Books')
+            .appendTo($('#bookshelf'));
         }
-      }
-    });
+      });
   }
 
   addISBN() {

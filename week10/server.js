@@ -6,8 +6,8 @@ const bcrypt = require('bcrypt');
 const { Pool } = require('pg')
 const path = require('path');
 var ejs = require('ejs');
-const { SSL_OP_NETSCAPE_REUSE_CIPHER_CHANGE_BUG } = require('constants');
 var app = express();
+var users = [];
 const PORT = process.env.PORT || 5000;
 const connectionString = process.env.DATABASE_URL;
 const pool = new Pool({
@@ -18,11 +18,12 @@ const pool = new Pool({
 });
 
 // set the view engine to ejs, etc.
-app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static('public'));
-app.use('/static', express.static('public'));
+app.set('view engine', 'ejs');
+
 app.use(express.urlencoded({ extended: false }));
+app.use('/static', express.static('public'));
+app.use(express.static('public'));
 app.use(express.json());
 app.use(session({
         secret: 'zesty skills',
@@ -33,11 +34,14 @@ app.use(session({
         }
     }));
 
-
-
 // default home page
-app.get('/', function(req, res) {
+app.get('/', getUsernames, function(req, res) {
     res.render('pages/index');
+});
+
+app.get('/session', function(req, res) {
+    console.log('session requested', req.session);
+    res.json(JSON.stringify(req.session));
 });
 
 //view home
@@ -76,17 +80,17 @@ app.get('/getSignup', function(req, res) {
     });
 });
 
-app.post('/createAccount', createAccount, getUserId, function(req, res) {
-    //logged in, redirect to user's library    
-    res.redirect('/getLibrary');
+app.post('/createAccount', isUsernameAvailable, hashPassword, addUser, getUserId, function(req, res) {   
+    res.json(req.session);
 });
+
 app.post('/login', login);
 
-app.get('/logout', function(req, res) {
-    
-    //logout the user
-    
-    res.render('pages/logout');
+app.post('/logout', function(req, res) {
+    // destroy session data
+    req.session.destroy();
+    console.log('user session destroyed');
+    res.send();
 });
 
 app.get('/library', function(req, res) {
@@ -112,9 +116,9 @@ app.get('/addBooks', function(req, res) {
 });
 
 //CRUD functionality for user's library books
-app.get('/getLibrary', getUserId, getLibrary);
-app.post('/addBookManual', getUserId, isMissingTitle, isExistingAuthor, isExistingBook, isExistingLibrary);
-app.put('/updateBook', isMissingTitle, isUnchanged, routeAuthor, updateAuthor, routeBook, updateBook);
+app.get('/getLibrary', verifyUser, getLibrary);
+app.post('/addBookManual', verifyUser, isMissingTitle, isExistingAuthor, isExistingBook, addLibrary);
+app.put('/updateBook', verifyUser, isMissingTitle, isUnchanged, routeAuthor, updateAuthor, routeBook, updateBook);
 app.delete('/deleteBook', deleteBook);
 
 
@@ -124,55 +128,57 @@ console.log('server running at ' + PORT);
 //*********************************//
 //  USER AUTHENTICATION FUNCTIONS  //
 //*********************************//
-function login(req, res) {
-    console.log('login');
-    
-    let success = false;
+function getUsernames(req, res, next) {
+    var sql = "SELECT username FROM bookshelf.users";
 
-    var sql = "SELECT password FROM bookshelf.users WHERE username = $1";
-
-    pool.query(sql, [req.body.user], function(err, result) {
+    pool.query(sql, function(err, result) {
         // If an error occurred...
         if (err) {
             console.log("Error in query: ")
             console.log(err);
         }
 
-        // Log this to the console for debugging purposes.
-        console.log("Back from DB with result:");
-        console.log('client pass: ' + req.body.password);
-        console.log('server pass: ' + result.rows[0].password);
-        bcrypt.compare(req.body.password, result.rows[0].password, function(err, match) {
-            console.log
-            console.log(match);
-            if (match){
-                success = true
-                req.session.username = req.body.user;
-            }
-        });
-        //success = true;
-        console.log(success);
-        res.json({'success': success});
+        if (result.rowCount > 0) {
+            result.rows.forEach(
+                (row) => {
+                    users.push(row.username);
+                });
+        } else {
+            console.log('no users in database');
+        }
+        next();    
     });
-  
-    //   if (req.body.username === "admin" && req.body.password === "password"){
-    //     success = true
-    //     req.session.username = username;
-    //   }
-    //   console.log(success);
-    //   res.json({'success': success});
-    // }
 }
 
-function verifyLogin(req, res, next){
-    if (req.session.username){
-      next();
-    }
-    res.status(401).json("could not verify");
+function isUsernameAvailable(req, res, next) {
+    console.log('check if username is available');
+    //check if username is available
+    if (users.find(user => user === req.body.user)) {
+        console.log('duplicate username')
+            res.status(406).json({
+                'message': 'Sorry, that username is already taken.'
+            });
+            return;
+    } else next();
 }
 
-function addNewUser(req, res, next) {
-    //add new user to database
+function hashPassword(req, res, next) {
+    console.log('hash the password')
+
+    let saltRounds = 10;
+
+    bcrypt.genSalt(saltRounds, function(err, salt) {
+        bcrypt.hash(req.body.password, salt, function(err, hash) {
+            req.body.password = hash;
+            next();
+        });
+    });
+}
+
+function addUser(req, res, next) {
+    console.log('insert new user');
+
+    //username is available, add new user to database
     var sql = 'INSERT INTO bookshelf.users (username, password) VALUES ($1, $2)';
 
     pool.query(sql, [req.body.user, req.body.password], function(err, result) {
@@ -188,55 +194,77 @@ function addNewUser(req, res, next) {
         }    
 
         // Log this to the console for debugging purposes.
-        console.log("Back from DB with result:");
         if (result.rowCount > 0) {
-            console.log(req.session.connect.sid);
+            console.log('new user successfully inserted');
             req.session.username = req.body.user;
-            console.log(req.session);
             next();
         }    
     });
 }
 
-function createAccount(req, res, next) {
-    console.log('createAccount')
+function login(req, res) {
+    console.log('login');
 
-    let saltRounds = 10;
+    var sql = "SELECT * FROM bookshelf.users WHERE username = $1";
 
-    bcrypt.genSalt(saltRounds, function(err, salt) {
-        bcrypt.hash(req.body.password, salt, function(err, hash) {
-            bcrypt.compare(req.body.password, hash, function(err, result) {
-                // result === true
-                console.log('hashed password compare is ' + result);
-                if (result) {
-                    console.log(hash);
-                    req.body.password = hash;
-                    addNewUser(req, res, next);
+    pool.query(sql, [req.body.user], function(err, result) {
+        // If an error occurred...
+        if (err) {
+            console.log("Error in query: ")
+            console.log(err);
+        }
+
+        // Log this to the console for debugging purposes.
+        console.log("Back from DB with result: " + result.rowCount);
+        if (result.rowCount) { //username exists
+            bcrypt.compare(req.body.password, result.rows[0].password, function(err, match) {
+                console.log(match);
+                if (match){
+                    console.log('Passwords match!');
+                    req.session.username = req.body.user;
+                    req.session.user_id = result.rows[0].user_id;
+                    res.json({
+                        'message': 'Successfully logged in!',
+                        'username': req.session.username,
+                        'user_id': req.session.user_id
+                    });
+                } else {
+                    console.log('Passwords do not match!');
+                    res.status(401).json({
+                        'message': 'Incorrect password!',
+                    });
                 }
             });
-        });
+        } else { //username does not exist
+            console.log('Username does not exist!');
+            res.status(404).json({
+                'message': 'Username does not exist!',
+            });
+        }
     });
 }
 
-function logout(req, res) {
-    let success = false;
-   
-    if (req.session.username){
-      success = true
-      req.session.destroy();
+function verifyUser(req, res, next) {
+    //check if we already have the user_id
+    if (req.session.user_id > 0) {
+        console.log('have user_id')
+        next();
+    } else {
+        console.log('user is not signed in');
+        res.status(401).json({
+            'message': 'You must sign in first!'
+        });
+        return;
     }
-    console.log(req.session);
-    res.json({'success': success});
 }
-
-
-
 
 //*************************//
 //  GET FUNCTIONS          //
 //*************************//
 function getUserId(req, res, next) {
-    //check database for username
+    console.log('get user_id');
+
+    //get user_id from database
     var sql = "SELECT * FROM bookshelf.users WHERE username = $1";
 
     pool.query(sql, [req.body.user], function(err, result) {
@@ -250,12 +278,11 @@ function getUserId(req, res, next) {
         console.log("Back from DB with result:");
         if (result.rowCount > 0) {
             console.log(result.rows);
-            req.body.user = result.rows[0].user_id;
             req.session.user_id = result.rows[0].user_id;
             next();
         } else {
             //missing user information, abort
-            console.log('Missing user information, abort');
+            console.log('user does not exist or is not signed in');
             res.statusMessage = "You must be signed in to do that!";
             res.status(401).json({
                 'message': res.statusMessage
@@ -266,8 +293,6 @@ function getUserId(req, res, next) {
 }
 
 function getLibrary(req, res) {
-    //TODO: replace this with login logic
-    let user_id = 1;
     //sql query to retrieve user's library of books from database
     sql = "SELECT * " +  
           "FROM bookshelf.library " +
@@ -277,7 +302,7 @@ function getLibrary(req, res) {
           "ORDER BY books.title ASC";
     
     //pool.query(sql, [req.query.user], function(err, result) {
-    pool.query(sql, [user_id], function(err, result) {
+    pool.query(sql, [req.session.user_id], function(err, result) {
         // If an error occurred...
         if (err) {
             console.log("Error in query: ")
@@ -290,9 +315,10 @@ function getLibrary(req, res) {
         if (result.rowCount > 0) {
             console.log(result.rows);
             res.json(result.rows);
-        } else res.json('');
-    });
-    
+        } else {
+            res.status(404).json({'message': "You don't have any books in your library yet!"});
+        }
+    });   
 }
 
 //*********************************//
@@ -308,6 +334,7 @@ function isMissingTitle(req, res, next) {
         });
         return;
     } else {
+        console.log('has a title')
         next();
     }
 }
@@ -361,6 +388,7 @@ function addAuthor(req, res, next) {
 
 function isExistingBook(req, res, next) {
     //check if book already exists
+    console.log('check if book exists')
     var sql = "SELECT * FROM bookshelf.books WHERE title = $1";
 
     pool.query(sql, [req.body.title], function(err, result) {
@@ -376,7 +404,7 @@ function isExistingBook(req, res, next) {
             req.body.publisher = result.rows[0].publisher;
             req.body.year = result.rows[0].year;
             console.log('book title already exists');
-            next();
+            isExistingLibrary(req, res, next);
         } else addBook(req, res, next);
     });
 }
@@ -386,7 +414,7 @@ function addBook(req, res, next) {
     console.log('new book title'); 
     
     //check for missing info
-    if (req.body.year === '') {
+    if (req.body.year === '' || !Number.isFinite(req.body.year)) {
         req.body.year = 0;
     }
         
@@ -408,64 +436,59 @@ function addBook(req, res, next) {
     });
 }
 
-function isExistingLibrary(req, res) {
-    //first, check if book_id and user_id are present
-    if (req.body.user > 0 && req.body.title > 0) {
-        //second, check if book already exists
-        var sql = "SELECT * FROM bookshelf.library WHERE user_id = $1 AND book_id = $2";
+function isExistingLibrary(req, res, next) {
+    //check if user already has book in library
+    console.log('existing library check')
+    var sql = "SELECT * FROM bookshelf.library WHERE user_id = $1 AND book_id = $2";
 
-        pool.query(sql, [req.body.user, req.body.title], function(err, result) {
-            // If an error occurred...
-            if (err) {
-                console.log("Error in query: ")
-                console.log(err);
-            }
-            
-            if (result.rowCount > 0) {
-                //user library already has this book, abort
-                console.log('duplicate library book');
-                res.statusMessage = "You already have this book!";
-                res.status(401).json({
-                    'message': res.statusMessage
-                });
-                return;
-            } else addLibrary(req, res);
-        });
-    }
+    pool.query(sql, [req.session.user_id, req.body.title], function(err, result) {
+        // If an error occurred...
+        if (err) {
+            console.log("Error in query: ")
+            console.log(err);
+        }
+        
+        if (result.rowCount > 0) {
+            //user library already has this book, abort
+            console.log('duplicate library book');
+            res.statusMessage = "You already have this book!";
+            res.status(401).json({
+                'message': res.statusMessage
+            });
+            return;
+        } else next();
+    });
 }
 
 function addLibrary(req, res) {
     console.log('addlibrary')
     
-    //check if user_id and book_id are present
-    if (req.body.user > 0 && req.body.title > 0) {
-        //both are present, insert into library
-        var sql = "INSERT INTO bookshelf.library (user_id, book_id) VALUES ($1, $2)";
+    //insert new book into user's library
+    var sql = "INSERT INTO bookshelf.library (user_id, book_id) VALUES ($1, $2)";
 
-        pool.query(sql, [req.body.user, req.body.title], function(err, result) {
-            // If an error occurred...
-            if (err) {
-                console.log("Error in query: ")
-                console.log(err);
-            }
-            
-            //Logging to console for debugging purposes
-            if (result.rowCount > 0) {
-                //book successfully inserted, continue
-                console.log('book added to library');
-                res.statusMessage = 'Book added to library!';
-                res.json({
-                    'message': res.statusMessage
-                });
-            } else {
-                console.log('oops, there was a problem adding library');
-                console.log(res.statusMessage);
-                res.status(400).json({
-                    'message': res.statusMessage
-                });
-            }
-        });
-    }             
+    pool.query(sql, [req.session.user_id, req.body.title], function(err, result) {
+        // If an error occurred...
+        if (err) {
+            console.log("Error in query: ")
+            console.log(err);
+        }
+        
+        //Logging to console for debugging purposes
+        if (result.rowCount > 0) {
+            //book successfully inserted, continue
+            console.log('book added to library');
+            res.statusMessage = 'Book added to library!';
+            res.json({
+                'message': res.statusMessage
+            });
+        } else {
+            console.log('oops, there was a problem adding library');
+            console.log(res.statusMessage);
+            res.status(400).json({
+                'message': res.statusMessage
+            });
+        }
+    });            
 }
 
 //*************************//
@@ -489,7 +512,16 @@ function isUnchanged(req, res, next) {
         next();
     } else if (parseInt(req.body.year) !== parseInt(req.body.oldBook.year)) {
         console.log('year is different')
-        next();
+        if (Number.isFinite(req.body.year)) {
+            console.log('valid year');
+            next();
+        } else {
+            res.statusMessage = "Year must be a number!";
+            res.status(401).json({
+                'message': res.statusMessage
+            });
+            return;
+        }
     } else {
         //info is all the same, abort
         console.log('info is all the same as before, abort');
@@ -551,6 +583,11 @@ function updateBook(req, res) {
     //if title didn't change, update other info
     if (req.body.title === req.body.oldBook.title) { //book title didn't change, update other info
         console.log('book title didnt change, update other info');
+
+        if (!Number.isFinite(req.body.year)) {
+            req.body.year = 0;
+        }
+
         var sql = "UPDATE bookshelf.books SET publisher = $1, year = $2 WHERE book_id = $3";
 
         pool.query(sql, [req.body.publisher, req.body.year, req.body.oldBook.book_id], function(err, result) {
@@ -619,25 +656,3 @@ function deleteBook(req, res) {
         return;
     });
 }
-
-
-function verifyUsername(req, res) {
-    //logic to check if a data item exists in the user's database
-      //esp. a particular book, or a username
-      console.log("Verifying username exists...")
-        var record = [req.query.username];
-        console.log(req);
-    
-        const sql = "SELECT * FROM bookshelf.users WHERE username = $1";
-        pool.query(sql, record, function(err, result) {
-        // If an error occurred...
-        if (err) {
-            console.log("Error in query: ")
-            console.log(err);
-        }
-        console.log(result.rows);
-        res.json(JSON.stringify(result.rows))
-    
-        })
-
-  }

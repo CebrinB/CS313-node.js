@@ -3,37 +3,52 @@ import ViewController from "./viewController.js";
 
 //declare User object
 var local = '';
-if (localStorage.hasOwnProperty('kirjasto.ni.username')) {
-  local = JSON.parse(localStorage.getItem('kirjasto.ni.username'));
-}
-
 const user = new User(local);
 const view = new ViewController(local);
 
-
 //onload, set the username and reveal main content
 window.addEventListener("load", () => {
-  if (user.username.length > 1) {
-    $('#userLabel').html(user.username + '  <i class="fas fa-lemon"></i>').toggleClass("d-none");
-  } else {
-    $('#userLabel').on('click', () => {
-      view.viewLogin();
-    })
-    .toggleClass("d-none");
-  }
+  
+  $.get('/session', function(response) {
+    console.log('Retrieved session: ' + response);
+    let session = JSON.parse(response);
+    if (session.username) {
+      console.log('username exists: ' + session.username)
+      user.setUsername(session.username);
+      view.setUsername(session.username);
+    }
+
+    view.toggleUsernameNav();
+    $('#userLabel').removeClass('d-none');
+ 
+  });
 
   $('#page').toggleClass("d-none");
   $('#home').on('click', () => {
     view.viewHome();
   });
+  $('.createAccount').on('click', () => {
+    view.viewSignup();
+  });
+  $('.login').on('click', () => {
+    view.viewLogin();
+  });
   $('.viewLibrary').on('click', () => {
     view.viewLibrary();
     view.library.getLibrary();
-  });
+  })
   $('.addBook').on('click', () => {
     view.viewAddBooks();
   })
-   
+  $('.logout').on('click', () => {
+    user.logout(view);
+  })
+  
+  $(document).on('click','.navbar-collapse',function(e) {
+    if( $(e.target).is('a') && ( $(e.target).attr('class') != 'dropdown-toggle' )) {
+        $(this).collapse('hide');
+    }
+  });
 });
 
 class ObservableDiv extends HTMLElement {
@@ -42,11 +57,19 @@ class ObservableDiv extends HTMLElement {
 
   // Respond to attribute changes.
   attributeChangedCallback(attr, oldValue, newValue) {
-    if (attr == 'name') {
+    if (attr === 'name') {
       switch (newValue) {
+        case 'home': 
+          $('.createAccount').on('click', () => {
+            view.viewSignup();
+          });
+          $('.login').on('click', () => {
+            view.viewLogin();
+          });
+          break;
         case 'login':
           $('#signin').on('click', () => {
-            user.login();
+            user.login(view, 1);
           });
           $('#signup').on('click', () => {
             view.viewSignup();
@@ -54,8 +77,7 @@ class ObservableDiv extends HTMLElement {
           break;
         case 'signup':
           $('#createAccount').on('click', () => {
-            user.createAccount();
-            view.library.getLibrary();
+            user.login(view, 2);
           });
           break;
         case 'library':
