@@ -42,20 +42,26 @@ export default class Library {
     .append($('<input/>', {
       class: 'form-control',
       id: 'year',
-      placeholder: 'Year'
+      placeholder: 'Year - Must be a number'
     }).val(book.year === 0 ? '' : book.year)));
 
-    //append save button
-    $('<div/>')
+    //append save and cancel buttons
+    $('<div/>', { class: 'spacing'})
     .append($('<a/>')
       .on('click', (e) => {
         this.updateBook(book, li);
       })
-      .html('<i class="far fa-check-square"></i>'))
+      .html('<i class="far fa-paper-plane"></i>  Update'))
+    .append($('<a/>')
+    .on('click', (e) => {
+      this.getLibrary();
+    })
+    .html('<i class="far fa-window-close"></i>  Cancel'))
     .append($('<div/>', {
       id: 'serverResponse'
     }))
     .appendTo(li);
+
   }
 
   updateBook(book, li) {
@@ -138,9 +144,11 @@ export default class Library {
       $('<li/>')
       //append pic
       .append($('<a/>')
-        .html('<img src="/images/book.jpg" alt="book cover"></img>'))
+        .html('<i class="fas fa-book-open pink"></i>'))
       //append span
-      .append($('<span/>')
+      .append($('<span/>', {
+        class: 'h4'
+      })
         .html(book.title))
       //append edit button
       .append($('<a/>')
@@ -157,11 +165,11 @@ export default class Library {
         })
         .html('<i class="far fa-trash-alt"></i>'))
       //append book info
-      .append($('<div/>')
+      .append($('<div/>', { class: 'book'})
         .html('Written by ' + author))
-      .append($('<div/>')
+      .append($('<div/>', { class: 'book'})
         .html('Published in ' + year))
-      .append($('<div/>')
+      .append($('<div/>', { class: 'book'})
         .html('Published by ' + publisher))
       .appendTo('#bookshelf');
      
@@ -243,7 +251,7 @@ export default class Library {
     
     if (filtered.length) {
       this.renderLibrary(filtered);
-    } else $('#bookshelf').html("No books in your library that start with " + letter);
+    } else $('#bookshelf').html("No books in your library start with " + letter);
   }
 
 };

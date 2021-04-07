@@ -512,7 +512,9 @@ function isUnchanged(req, res, next) {
         next();
     } else if (parseInt(req.body.year) !== parseInt(req.body.oldBook.year)) {
         console.log('year is different')
-        if (Number.isFinite(req.body.year)) {
+        console.log(isFinite(req.body.year), req.body.year);
+        
+        if (isFinite(req.body.year)) {
             console.log('valid year');
             next();
         } else {
@@ -583,8 +585,8 @@ function updateBook(req, res) {
     //if title didn't change, update other info
     if (req.body.title === req.body.oldBook.title) { //book title didn't change, update other info
         console.log('book title didnt change, update other info');
-
-        if (!Number.isFinite(req.body.year)) {
+        
+        if (!isFinite(req.body.year) || req.body.year === '') {
             req.body.year = 0;
         }
 

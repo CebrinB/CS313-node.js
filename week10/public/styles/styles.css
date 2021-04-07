@@ -12,6 +12,7 @@ body {
 a:not(.navbar-brand, .nav-link) {
   color: inherit;
   text-decoration: inherit;
+  cursor: pointer;
 }
 
 /*make li's into clickable links without refreshing page*/
@@ -22,7 +23,6 @@ a:not(.navbar-brand, .nav-link) {
 /*styling for homepage contact card center element*/
 .contact-card {
   padding-top: 60px;
-  padding-bottom: 120px;
   margin-bottom: 80px;
 }
 
@@ -92,6 +92,51 @@ a:not(.navbar-brand, .nav-link) {
   margin-bottom: 25px;
   text-align: center;
 }
+
+/*styling books in the library*/
+.pink {
+  color: #ad5047;
+  font-size: 200%;
+}
+
+.alphabet {
+  padding: 10px;
+  padding-left: 15px;
+  padding-right: 15px;
+  background: #fff;
+}
+
+#bookshelf {
+  /*remove bullet points from li items*/
+  list-style-type: none;
+  margin-top: 15px;
+  padding-left: 0;
+}
+
+#bookshelf > * {
+  border: solid 1px #223f20;
+  padding: 10px;
+  font-size: large;
+  background: #d8f0f2;
+  
+}
+
+#bookshelf > * > * {
+  padding: 10px;
+}
+
+.book {
+  font-size: small;
+}
+
+.spacing {
+  display:flex;
+  justify-content: space-around;
+  font-family: 'Sacramento', cursive;
+  font-size: 22px;
+  color: #ad5047;
+}
+
 
 /*styling links in footer to space evenly*/
 #follow {
